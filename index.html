@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0061)file:///C:/Users/engla/Downloads/Bilan_express_SI_Nyon_6.html -->
+<!-- saved from url=(0062)file:///C:/Users/engla/Downloads/Bilan_express_SI_Nyon_11.html -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bilan express - SI Nyon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./Bilan express - SI Nyon_files/css2" rel="stylesheet">
+<link href="./index_files/css2" rel="stylesheet">
 <style>
 :root{
   --slate:#4C565F; --slate-d:#3C444B; --slate-l:#8FA0AE;
@@ -191,9 +191,9 @@ function compute(){
   const carPP=km*carF, flyPP=A.avion||0;
   const alimPP=A.diet||2100, goodsPP=A.achats||2600, incPP=2500;
   const totalPP=heatPP+elecPP+carPP+flyPP+alimPP+goodsPP+incPP;
-  const showerPP=A.eau===0.8?35:A.eau===1.3?75:110;
+  const showerPP=A.eau===0.8?25:A.eau===1.3?42:72;
   const ext=A.exterieur==='pool'?180:(A.exterieur||0);
-  const water=(95+showerPP)*m+ext;
+  const water=100+showerPP+ext/m;   // litres par personne et par jour
   return {m, enHome, water, heatPP, elecPP, carPP, flyPP, alimPP, goodsPP, incPP,
     energiePP:heatPP+elecPP, depPP:carPP+flyPP, consoPP:alimPP+goodsPP, totalPP};
 }
@@ -240,13 +240,16 @@ function results(){
   const totT=r(totPP,1);
   const incT=r(c.incPP/1000,1);
   const planetes=r(totPP/5,1);
+  const ratioObj=r(totPP/2,1);
   const NYON=13.6, OBJ=1.5;
   const scale=Math.max(totPP,NYON)*1.12;
   const fillPct=Math.min(100,totPP/scale*100);
   const nyP=NYON/scale*100, objP=OBJ/scale*100;
-  const charbon=r(c.enHome/8.14);
-  const bains=r(c.water/150);
-  const ppEau=r(c.water/c.m);
+  const enPP=r(c.enHome/c.m);
+  const mazoutL=r(c.enHome/c.m/10);
+  const kmVE=Math.round(c.enHome/c.m*5/1000)*1000;
+  const charbonPP=r(c.enHome/c.m/8.14);
+  const ppEau=r(c.water);
   const parts=[['Énergie',c.energiePP,'#FBB513'],['Déplacements',c.depPP,'#4C565F'],['Alimentation, achats',c.consoPP,'#D96C32'],['Incompressible',c.incPP,'#8FA0AE']];
   const tot=c.totalPP||1;
   const segs=parts.map(p=>`<i style="width:${Math.max(0,p[1]/tot*100)}%;background:${p[2]}"></i>`).join('');
@@ -285,25 +288,25 @@ function results(){
 
     <div class="metric m-en"><div class="bar"></div><div class="body">
       <div class="lbl">Énergie du logement</div>
-      <div class="val"><span id="ven">0</span> <span class="unit">kWh par an</span></div>
-      <div class="eq">L'équivalent d'environ ${fmt(charbon)} kg de charbon brûlés.</div></div></div>
+      <div class="val"><span id="ven">0</span> <span class="unit">kWh par personne et par an</span></div>
+      <div class="eq">Chauffage, eau chaude et électricité. Pour vous l'imaginer&nbsp;: environ <b>${fmt(mazoutL)} litres de mazout</b>, ou <b>${fmt(kmVE)} km en voiture électrique</b>, ou encore <b>${fmt(charbonPP)} kg de charbon</b>.</div></div></div>
 
     <div class="metric m-eau"><div class="bar"></div><div class="body">
       <div class="lbl">Votre eau</div>
-      <div class="val"><span id="veau">0</span> <span class="unit">litres par jour</span></div>
-      <div class="eq">Soit ${fmt(ppEau)} litres par personne, environ ${fmt(bains)} baignoires. Distribuée par les SI Nyon.</div></div></div>
+      <div class="val"><span id="veau">0</span> <span class="unit">litres par personne et par jour</span></div>
+      <div class="eq">L'eau du robinet (environ 40&nbsp;L pour les WC, le reste douche, cuisine, lessive), distribuée par les SI Nyon. Moyenne suisse&nbsp;: 142&nbsp;L par personne&nbsp;; à Nyon, 228&nbsp;L tous usages confondus (2023). Mais l'eau cachée dans notre alimentation et nos objets pèse bien plus&nbsp;: <b>environ 4200 litres par jour</b>, surtout pour la production agricole et industrielle, souvent à l'étranger.</div></div></div>
 
     <div class="utopie">
-      <div class="h">Et l'horizon&nbsp;? La société à 2000 watts</div>
-      <p>Même en faisant tout juste, difficile de descendre seul sous 4 à 5&nbsp;tonnes aujourd'hui&nbsp;: le reste dépend de choix collectifs. L'objectif suisse pour 2050 vise environ 1 à 2&nbsp;tonnes par personne. Plus loin encore, la société à 2000&nbsp;watts, née à l'EPF de Zurich, imagine un mode de vie autour de 1&nbsp;tonne de CO₂&nbsp;: un horizon ambitieux, qui suppose autant de décisions collectives que de gestes individuels.</p>
+      <div class="h">Un mode de vie soutenable, c'est combien&nbsp;?</div>
+      <p>De l'ordre de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Votre empreinte en représente aujourd'hui environ <b>${L(ratioObj)} fois plus</b>. Même en faisant tout juste, difficile de descendre seul sous 4 à 5&nbsp;tonnes&nbsp;: le reste dépend de choix collectifs. C'est le sens de la société à 2000&nbsp;watts, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
     </div>
 
     <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Calcul basé sur le bilan carbone 2022 de la Ville de Nyon. Estimation indicative.</p>
     <button class="restart" id="rs">Recommencer</button>
   </div>`;
   countUp(document.getElementById('vtot'),totT,1);
-  countUp(document.getElementById('ven'),r(c.enHome),0);
-  countUp(document.getElementById('veau'),r(c.water),0);
+  countUp(document.getElementById('ven'),enPP,0);
+  countUp(document.getElementById('veau'),ppEau,0);
   document.getElementById('rs').onclick=()=>{A={};step=0;render();};
 }
 render();

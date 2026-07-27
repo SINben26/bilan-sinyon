@@ -112,6 +112,8 @@ const Q = [
   o:[["Je vis seul·e",1],["Deux",2],["Trois ou quatre",3.5],["Cinq ou plus",5]]},
  {id:'logement',g:'menage',gl:'Votre ménage',q:"Vous habitez plutôt&nbsp;:",
   o:[["Un appartement","appt"],["Une maison","maison"]]},
+ {id:'statut',g:'menage',gl:'Votre ménage',q:"Vous êtes&nbsp;:",
+  o:[["Propriétaire","proprio"],["Locataire","locataire"]]},
  {id:'chauffage',g:'energie',gl:'Énergie du logement',q:"Comment chauffez-vous votre logement&nbsp;?",
   o:[["Au mazout","mazout"],["Au gaz","gaz"],["Pompe à chaleur","pac"],["Chauffage électrique","elec"],["Bois ou chauffage à distance","renouv"],["Je ne sais pas","inconnu"]]},
  {id:'iso',g:'energie',gl:'Énergie du logement',q:"Et l'isolation, c'est plutôt&nbsp;:",
@@ -184,12 +186,13 @@ function compute(){
   const carF=A.voiture==='therm'?0.20:A.voiture==='hyb'?0.15:A.voiture==='elec'?0.08:0;
   const km=A.voiture==='none'?0:(A.km||0);
   const carPP=km*carF, flyPP=A.avion||0;
-  const alimPP=A.diet||2100, goodsPP=A.achats||2600, incPP=2500;
+  const carEnergyPP=km*(A.voiture==='therm'?0.70:A.voiture==='hyb'?0.50:A.voiture==='elec'?0.19:0);
+  const alimPP=A.diet||2100, goodsPP=A.achats||2600, incPP=1500;
   const totalPP=heatPP+elecPP+carPP+flyPP+alimPP+goodsPP+incPP;
   const showerPP=A.eau===0.8?25:A.eau===1.3?42:72;
   const ext=A.exterieur==='pool'?180:(A.exterieur||0);
   const water=100+showerPP+ext/m;   // litres par personne et par jour
-  return {m, enHome, water, heatPP, elecPP, carPP, flyPP, alimPP, goodsPP, incPP,
+  return {m, enHome, water, heatPP, elecPP, carPP, flyPP, carEnergyPP, alimPP, goodsPP, incPP,
     energiePP:heatPP+elecPP, depPP:carPP+flyPP, consoPP:alimPP+goodsPP, totalPP};
 }
 function leverText(c){
@@ -197,7 +200,14 @@ function leverText(c){
   const mob=c.carPP+c.flyPP;
   const subvLine="La Ville de Nyon et les SI subventionnent ces travaux (pompe à chaleur, isolation, fenêtres, solaire).";
   let title,body,extra="";
-  if(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu'){
+  if(A.statut==='locataire'){
+    const foss=(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='elec'||A.chauffage==='inconnu');
+    title="Vos leviers de locataire";
+    body=(foss
+      ? "Votre chauffage est encore gourmand en énergie, mais en location c'est le propriétaire qui décide des travaux&nbsp;: transmettez-lui les aides des SI Nyon pour une pompe à chaleur ou l'isolation. "
+      : "Bonne nouvelle, votre chauffage est déjà sobre. ")
+      + "Ce que vous maîtrisez vraiment&nbsp;: choisir un produit électrique vert auprès des SI, et agir sur vos déplacements, votre alimentation et vos achats, qui pèsent le plus dans votre bilan.";
+  } else if(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu'){
     title="Votre chauffage, en priorité";
     body="C'est votre principal poste d'énergie, et il brûle encore un combustible fossile. Une pompe à chaleur fournit 3 à 4&nbsp;kWh de chaleur pour 1&nbsp;kWh d'électricité, sans rien brûler. "+subvLine;
   } else if(A.chauffage==='elec'){
@@ -237,16 +247,16 @@ function results(){
   const totPP=c.totalPP/1000;
   const totT=r(totPP,1);
   const incT=r(c.incPP/1000,1);
-  const planetes=r(totPP/1.7,1);
+  const planetes=r(totPP/4.5,1);
   const ratioObj=r(totPP/2,1);
   const NYON=13.6, OBJ=1.5;
   const scale=Math.max(totPP,NYON)*1.12;
   const fillPct=Math.min(100,totPP/scale*100);
   const nyP=NYON/scale*100, objP=OBJ/scale*100;
-  const enPP=r(c.enHome/c.m);
-  const mazoutL=r(c.enHome/c.m/10);
-  const kmVE=Math.round(c.enHome/c.m*5/1000)*1000;
-  const charbonPP=r(c.enHome/c.m/8.14);
+  const enTot=c.enHome/c.m + c.carEnergyPP;
+  const enPP=r(enTot);
+  const mazoutL=r(enTot/10);
+  const charbonPP=r(enTot/8.14);
   const ppEau=r(c.water);
   const parts=[['Énergie',c.energiePP,'#FBB513'],['Déplacements',c.depPP,'#4C565F'],['Alimentation, achats',c.consoPP,'#D96C32'],['Incompressible',c.incPP,'#8FA0AE']];
   const tot=c.totalPP||1;
@@ -259,9 +269,11 @@ function results(){
     <div class="rhead"><h2>Votre empreinte</h2><p>Une estimation rapide, pour ouvrir la discussion.</p></div>
 
     <div class="hero">
-      <div class="lbl">Empreinte carbone totale</div>
-      <div class="big"><span id="vtot">0</span> <small>tonnes de CO₂ par personne et par an</small></div>
-      <div class="sub">🌍 Si tout le monde émettait comme vous, il faudrait environ <b>${L(planetes)} planètes</b> pour absorber ce CO₂.</div>
+      <div class="lbl">Votre énergie (logement et voiture)</div>
+      <div class="big"><span id="ven">0</span> <small>kWh par personne et par an</small></div>
+      <div style="font-size:12.5px;color:var(--mut);margin-top:2px">≈ ${fmt(mazoutL)} litres de mazout ou ${fmt(charbonPP)} kg de charbon</div>
+      <div style="font-size:14px;color:var(--slate);margin-top:9px">Votre empreinte carbone, tous postes confondus&nbsp;: <b><span id="vtot">0</span> tonnes de CO₂ par an</b></div>
+      <div class="sub" style="margin-top:5px">🌍 Si toute l'humanité vivait comme vous, il faudrait environ <b>${L(planetes)} planètes</b>.</div>
       <div class="scale">
         <div class="track">
           <div class="fill" style="width:${fillPct}%"></div>
@@ -284,22 +296,33 @@ function results(){
       <h3>${lv.title}</h3><p>${lv.body}</p>${lv.extra?`<p>${lv.extra}</p>`:''}
     </div>
 
-    <div class="metric m-en"><div class="bar"></div><div class="body">
-      <div class="lbl">Énergie du logement</div>
-      <div class="val"><span id="ven">0</span> <span class="unit">kWh par personne et par an</span></div>
-      <div class="eq">Chauffage, eau chaude et électricité. Pour vous l'imaginer&nbsp;: environ <b>${fmt(mazoutL)} litres de mazout</b>, ou <b>${fmt(kmVE)} km en voiture électrique</b>, ou encore <b>${fmt(charbonPP)} kg de charbon</b>.</div></div></div>
-
     <div class="metric m-eau"><div class="bar"></div><div class="body">
       <div class="lbl">Votre eau</div>
       <div class="val"><span id="veau">0</span> <span class="unit">litres par personne et par jour</span></div>
       <div class="eq">L'eau du robinet (environ 40&nbsp;L pour les WC, le reste douche, cuisine, lessive), distribuée par les SI Nyon. Moyenne suisse&nbsp;: 142&nbsp;L par personne&nbsp;; à Nyon, 228&nbsp;L tous usages confondus (2023). Mais l'eau cachée dans notre alimentation et nos objets pèse bien plus&nbsp;: <b>environ 4200 litres par jour</b>, surtout pour la production agricole et industrielle, souvent à l'étranger.</div></div></div>
+
+    <div style="border-top:1px solid var(--line);margin-top:6px;padding-top:14px">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:6px">1 tonne de CO₂, c'est combien d'énergie&nbsp;?</div>
+      <div style="font-size:13.5px;color:var(--ink);line-height:1.5;margin-bottom:10px">Plus la source est propre, plus vous consommez d'énergie avant d'atteindre une tonne de CO₂. Le même kWh, propre ou sale, ne pèse pas pareil.</div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:var(--ink);flex:0 0 82px;text-align:right">1 220</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Charbon <span style="color:var(--mut);font-weight:500">· 0,82 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:var(--ink);flex:0 0 82px;text-align:right">3 250</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Mazout <span style="color:var(--mut);font-weight:500">· 0,308 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:var(--ink);flex:0 0 82px;text-align:right">3 690</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Gaz naturel <span style="color:var(--mut);font-weight:500">· 0,271 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:var(--blue);flex:0 0 82px;text-align:right">5 500</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Électricité, mix suisse <span style="color:var(--mut);font-weight:500">· 0,181 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:var(--green,#4E8A6B);flex:0 0 82px;text-align:right">22 000</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Solaire, produit vert <span style="color:var(--mut);font-weight:500">· 0,045 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:#4E8A6B;flex:0 0 82px;text-align:right">24 000</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Bois <span style="color:var(--mut);font-weight:500">· 0,041 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:#6B5BA0;flex:0 0 82px;text-align:right">83 000</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Nucléaire <span style="color:var(--mut);font-weight:500">· 0,012 kg CO₂e/kWh</span></span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><span style="font-size:20px;font-weight:800;color:#5B8FA8;flex:0 0 82px;text-align:right">91 000</span><span style="font-size:11px;color:var(--mut);flex:0 0 24px">kWh</span><span style="font-size:14px;font-weight:600;color:var(--slate)">Éolien <span style="color:var(--mut);font-weight:500">· 0,011 kg CO₂e/kWh</span></span></div>
+      </div>
+      <div style="font-size:11px;color:var(--mut);margin-top:8px;line-height:1.4">Facteurs du bilan de Nyon (OFEV)&nbsp;: l'électricité est comptée au mix suisse de consommation.</div>
+    </div>
 
     <div class="utopie">
       <div class="h">Un mode de vie soutenable, c'est combien&nbsp;?</div>
       <p>De l'ordre de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Votre empreinte en représente aujourd'hui environ <b>${L(ratioObj)} fois plus</b>. Même en faisant tout juste, difficile de descendre seul sous 4 à 5&nbsp;tonnes&nbsp;: le reste dépend de choix collectifs. C'est le sens de la société à 2000&nbsp;watts, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
     </div>
 
-    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes rapporte votre empreinte à ce que la Terre peut absorber, environ 1,7&nbsp;t de CO₂ par personne. Calcul basé sur le bilan carbone 2022 de la Ville de Nyon. Estimation indicative.</p>
+    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
     <button class="restart" id="rs">Recommencer</button>
   </div>`;
   countUp(document.getElementById('vtot'),totT,1);

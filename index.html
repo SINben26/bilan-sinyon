@@ -136,8 +136,8 @@ const Q = [
   o:[["Rarement ou jamais",1400],["Quelques fois par semaine",2100],["Presque tous les jours",2900]]},
  {id:'achats',g:'conso',gl:'Votre consommation',q:"Vos achats (vêtements, objets, high-tech)&nbsp;:",
   o:[["Je limite et je répare",1500],["Dans la moyenne",2600],["J'aime le neuf et je renouvelle souvent",4000]]},
- {id:'subv',g:'menage',gl:'Pour finir',q:"Saviez-vous que la Ville subventionne ces travaux&nbsp;?",
-  o:[["Oui, je connais les aides","oui"],["Non, pas vraiment","non"]]},
+ {id:'subv',g:'menage',gl:'Pour finir',q:"Connaissez-vous les subventions des SI Nyon et les visites Éco-Logement&nbsp;?",
+  o:[["Oui, je connais","oui"],["Non, pas encore","non"]]},
 ];
 
 let A={}, step=0;
@@ -198,15 +198,16 @@ function compute(){
 function leverText(c){
   const fossile=(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu');
   const mob=c.carPP+c.flyPP;
-  const subvLine="La Ville de Nyon et les SI subventionnent ces travaux (pompe à chaleur, isolation, fenêtres, solaire).";
+  const subvLine="La Ville de Nyon et les SI subventionnent ces travaux (pompe à chaleur, isolation, fenêtres, solaire). <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir toutes les subventions</a>.";
   let title,body,extra="";
   if(A.statut==='locataire'){
     const foss=(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='elec'||A.chauffage==='inconnu');
     title="Vos leviers de locataire";
+    const lienSubv=" <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir toutes les subventions de la Ville</a>.";
     body=(foss
-      ? "Votre chauffage est encore gourmand en énergie, mais en location c'est le propriétaire qui décide des travaux&nbsp;: transmettez-lui les aides des SI Nyon pour une pompe à chaleur ou l'isolation. "
+      ? "En location, les gros travaux (pompe à chaleur, fenêtres, isolation) dépendent de votre propriétaire&nbsp;: transmettez-lui les aides des SI Nyon. "
       : "Bonne nouvelle, votre chauffage est déjà sobre. ")
-      + "Ce que vous maîtrisez vraiment&nbsp;: choisir un produit électrique vert auprès des SI, et agir sur vos déplacements, votre alimentation et vos achats, qui pèsent le plus dans votre bilan.";
+      + "Mais d'autres subventions vous sont directement accessibles, à vous, notamment la réparation d'objets. Vos vrais leviers&nbsp;: choisir un produit électrique vert auprès des SI, et agir sur vos déplacements, votre alimentation et vos achats, qui pèsent le plus dans votre bilan." + lienSubv;
   } else if(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu'){
     title="Votre chauffage, en priorité";
     body="C'est votre principal poste d'énergie, et il brûle encore un combustible fossile. Une pompe à chaleur fournit 3 à 4&nbsp;kWh de chaleur pour 1&nbsp;kWh d'électricité, sans rien brûler. "+subvLine;
@@ -228,7 +229,7 @@ function leverText(c){
     else if(mob>0) body="Côté énergie, vous êtes au point. Le levier qui reste relève de la mobilité\u00A0: le train et le vélo sur les courts trajets, ou l'électrique.";
     else body="Rien ne ressort, côté énergie comme ailleurs. Continuez ainsi.";
   }
-  if(A.subv==='non' && !/subventionn/.test(body)) extra="Au passage, puisque vous ne les connaissiez pas\u00A0: les SI Nyon et la Ville aident financièrement pompe à chaleur, isolation, fenêtres et solaire. Passez nous voir.";
+  if(A.subv==='non' && !/subvention/.test(body)) extra="Au passage, puisque vous ne les connaissiez pas encore\u00A0: les SI Nyon subventionnent de nombreux gestes (pompe à chaleur, fenêtres, solaire, réparation d'objets…) et proposent des visites Éco-Logement gratuites. <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir les subventions</a>.";
   else if(A.eau===1.7) extra="Côté eau, alterner bain et douche allège facture, eau et énergie de chauffe.";
   return {title,body,extra};
 }

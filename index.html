@@ -46,14 +46,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .back{appearance:none;background:none;border:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:8px 4px;visibility:hidden}
 .back.show{visibility:visible}
 .hint{font-size:13px;color:var(--mut)}
-
 /* results */
 .res{display:flex;flex-direction:column;gap:14px}
 .rhead h2{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--slate-d);margin:0 0 4px}
 .rhead p{margin:0;color:var(--mut);font-size:14px}
 .hero{border:1px solid var(--line);border-radius:12px;padding:16px;background:linear-gradient(180deg,#fff, #FAFBFC)}
 .hero .lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
-.hero .big{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--slate-d);margin:4px 0 2px}
+.hero .big{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--slate-d);margin:4px 0 2px;white-space:nowrap}
 .hero .big small{font-size:18px;font-weight:700;color:var(--mut)}
 .hero .sub{font-size:13.5px;color:var(--slate)}
 .scale{margin-top:24px}
@@ -64,7 +63,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .mark.lo b{left:0;transform:none}
 .mark.hi b{right:0;left:auto;transform:none}
 .scalelbl{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:13px}
-
 .break{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .break .h{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px}
 .stack{display:flex;height:22px;border-radius:6px;overflow:hidden}
@@ -72,7 +70,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:11px}
 .legend span{font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:6px}
 .legend span b{width:10px;height:10px;border-radius:3px;display:inline-block}
-
 .metric{border-radius:12px;border:1px solid var(--line);overflow:hidden}
 .metric .bar{height:6px}
 .metric .body{padding:14px 16px}
@@ -82,7 +79,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .metric .eq{font-size:13.5px;color:var(--slate);margin-top:6px}
 .m-en .bar{background:var(--orange)} .m-en .val{color:var(--orange)}
 .m-eau .bar{background:var(--blue)} .m-eau .val{color:var(--blue)}
-
 .lever{background:#FFF8EC;border:1.5px solid var(--amber);border-radius:12px;padding:15px 16px}
 .lever .k{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A6B00;margin-bottom:5px;display:flex;align-items:center;gap:7px}
 .lever .k svg{width:15px;height:15px}
@@ -139,7 +135,6 @@ const Q = [
  {id:'subv',g:'menage',gl:'Pour finir',q:"Connaissez-vous les subventions des SI Nyon et les visites Éco-Logement&nbsp;?",
   o:[["Oui, je connais","oui"],["Non, pas encore","non"]]},
 ];
-
 let A={}, step=0;
 const card=document.getElementById('card'), chev=document.getElementById('chev');
 function visible(){ return Q.filter(q => q.id!=='km' || A.voiture!=='none'); }
@@ -162,7 +157,6 @@ function render(){
 }
 function r(n,d=0){const f=Math.pow(10,d);return Math.round(n*f)/f;}
 function fmt(n){return r(n).toLocaleString('fr-CH');}
-
 function compute(){
   const m=A.menage||2;
   const baseT=(A.logement==='maison'?16000:7000)*(A.iso||1);
@@ -198,16 +192,16 @@ function compute(){
 function leverText(c){
   const fossile=(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu');
   const mob=c.carPP+c.flyPP;
-  const subvLine="La Ville de Nyon et les SI subventionnent ces travaux (pompe à chaleur, isolation, fenêtres, solaire). <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir toutes les subventions</a>.";
+  const subvLine="La Ville de Nyon et les SI subventionnent ces travaux (pompe à chaleur, isolation, fenêtres, solaire). <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir les subventions énergie</a> (la Ville en propose d'autres aussi, notamment pour la mobilité).";
   let title,body,extra="";
   if(A.statut==='locataire'){
     const foss=(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='elec'||A.chauffage==='inconnu');
     title="Vos leviers de locataire";
-    const lienSubv=" <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir toutes les subventions de la Ville</a>.";
+    const lienSubv=" <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir les subventions énergie de la Ville</a> (il en existe d'autres, notamment pour la mobilité).";
     body=(foss
       ? "En location, les gros travaux (pompe à chaleur, fenêtres, isolation) dépendent de votre propriétaire&nbsp;: transmettez-lui les aides des SI Nyon. "
       : "Bonne nouvelle, votre chauffage est déjà sobre. ")
-      + "Mais d'autres subventions vous sont directement accessibles, à vous, notamment la réparation d'objets. Vos vrais leviers&nbsp;: choisir un produit électrique vert auprès des SI, et agir sur vos déplacements, votre alimentation et vos achats, qui pèsent le plus dans votre bilan." + lienSubv;
+      + "Mais d'autres subventions énergie vous sont directement accessibles, à vous, notamment la réparation d'objets. Vos vrais leviers&nbsp;: choisir un produit électrique vert auprès des SI, et agir sur vos déplacements, votre alimentation et vos achats, qui pèsent le plus dans votre bilan." + lienSubv;
   } else if(A.chauffage==='mazout'||A.chauffage==='gaz'||A.chauffage==='inconnu'){
     title="Votre chauffage, en priorité";
     body="C'est votre principal poste d'énergie, et il brûle encore un combustible fossile. Une pompe à chaleur fournit 3 à 4&nbsp;kWh de chaleur pour 1&nbsp;kWh d'électricité, sans rien brûler. "+subvLine;
@@ -225,11 +219,11 @@ function leverText(c){
     body="Votre logement perd encore beaucoup de chaleur vers l'extérieur. Mieux l'isoler réduit directement l'énergie de chauffage, donc la facture. "+subvLine;
   } else {
     title="Déjà sobre côté énergie";
-    if(A.avion>=3000) body="Côté énergie, rien à redire. Votre plus gros levier restant est ailleurs\u00A0: espacer les vols long-courriers, qui pèsent lourd dans n'importe quelle empreinte.";
-    else if(mob>0) body="Côté énergie, vous êtes au point. Le levier qui reste relève de la mobilité\u00A0: le train et le vélo sur les courts trajets, ou l'électrique.";
+    if(A.avion>=3000) body="Côté énergie, rien à redire. Votre plus gros levier restant est ailleurs : espacer les vols long-courriers, qui pèsent lourd dans n'importe quelle empreinte.";
+    else if(mob>0) body="Côté énergie, vous êtes au point. Le levier qui reste relève de la mobilité : le train et le vélo sur les courts trajets, ou l'électrique.";
     else body="Rien ne ressort, côté énergie comme ailleurs. Continuez ainsi.";
   }
-  if(A.subv==='non' && !/subvention/.test(body)) extra="Au passage, puisque vous ne les connaissiez pas encore\u00A0: les SI Nyon subventionnent de nombreux gestes (pompe à chaleur, fenêtres, solaire, réparation d'objets…) et proposent des visites Éco-Logement gratuites. <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir les subventions</a>.";
+  if(A.subv==='non' && !/subvention/.test(body)) extra="Au passage, puisque vous ne les connaissiez pas encore : les SI Nyon subventionnent de nombreux gestes côté énergie (pompe à chaleur, fenêtres, solaire, réparation d'objets…) et proposent des visites Éco-Logement gratuites. <a href='https://www.nyon.ch/vivre-a-nyon/dechets-energies/subventions-energie-13357' target='_blank' rel='noopener'>Voir les subventions énergie</a>.";
   else if(A.eau===1.7) extra="Côté eau, alterner bain et douche allège facture, eau et énergie de chauffe.";
   return {title,body,extra};
 }
@@ -256,6 +250,7 @@ function results(){
   const nyP=NYON/scale*100, objP=OBJ/scale*100;
   const enTot=c.enHome;   // total du logement (ménage) : chauffage + eau chaude + électricité
   const enPP=r(enTot);
+  const enParPers=Math.round(enTot/m/100)*100;   // la même énergie, ramenée par personne
   const mazoutL=r(enTot/10);
   const charbonPP=r(enTot/8.14);
   const ppEau=r(c.water);
@@ -263,7 +258,6 @@ function results(){
   const tot=c.totalPP||1;
   const segs=parts.map(p=>`<i style="width:${Math.max(0,p[1]/tot*100)}%;background:${p[2]}"></i>`).join('');
   const leg=parts.map(p=>`<span><b style="background:${p[2]}"></b>${p[0]} ${L(r(p[1]/1000,1))}&nbsp;t</span>`).join('');
-
   const plS = planetes>=2?'s':'';
   // jauge en arc CO2 (vert -> rouge)
   const gMax=15, gcx=140, gcy=134, gr=104;
@@ -280,7 +274,7 @@ function results(){
   const gb1=[gNB[0]+4.5*gper[0], gNB[1]+4.5*gper[1]], gb2=[gNB[0]-4.5*gper[0], gNB[1]-4.5*gper[1]];
   const gNeedle=`<line x1="140" y1="134" x2="${gNB[0].toFixed(1)}" y2="${gNB[1].toFixed(1)}" stroke="#2E363D" stroke-width="3.5" stroke-linecap="round"/><circle cx="${gDot[0].toFixed(1)}" cy="${gDot[1].toFixed(1)}" r="9" fill="#fff"/><polygon points="${gDot[0].toFixed(1)},${gDot[1].toFixed(1)} ${gb1[0].toFixed(1)},${gb1[1].toFixed(1)} ${gb2[0].toFixed(1)},${gb2[1].toFixed(1)}" fill="#2E363D"/><circle cx="140" cy="134" r="5" fill="#2E363D"/>`;
   const nyonEmb="data:image/png;base64,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";
-  const gauge=`<svg viewBox="0 0 300 158" style="width:100%;max-width:330px;display:block;margin:6px auto 0">${gSeg}${gtick(1.5)}${gtick(13.6)}<image href="${nyonEmb}" x="248" y="50" width="22" height="28"/><text x="259" y="90" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E363D">13,6 t</text><text x="86" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="#2E363D">Objectif 2050</text><text x="86" y="133" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E363D">1\u20132 t</text>${gNeedle}<text x="36" y="152" font-size="10" fill="#7A848C" text-anchor="middle">0</text><text x="248" y="152" font-size="10" fill="#7A848C" text-anchor="middle">15+ t</text></svg>`;
+  const gauge=`<svg viewBox="0 0 300 158" style="width:100%;max-width:330px;display:block;margin:6px auto 0">${gSeg}${gtick(1.5)}${gtick(13.6)}<image href="${nyonEmb}" x="248" y="50" width="22" height="28"/><text x="259" y="90" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E363D">13,6 t</text><text x="86" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="#2E363D">Objectif 2050</text><text x="86" y="133" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E363D">1–2 t</text>${gNeedle}<text x="36" y="152" font-size="10" fill="#7A848C" text-anchor="middle">0</text><text x="248" y="152" font-size="10" fill="#7A848C" text-anchor="middle">15+ t</text></svg>`;
   // camembert eau (répartition domestique moyenne)
   const eauSlices=[['Chasse d\'eau',28.9,'#19417E'],['Douche',25.4,'#2E5A9E'],['Évier',15.5,'#4E7BB8'],['Lave-linge',12.0,'#6E97C8'],['Lavabo',11.3,'#5B8FA8'],['Extérieur',4.9,'#8FB4D0'],['Lave-vaisselle',2.1,'#B0CBE0']];
   let eauCG='',eauAcc=0,eauLeg='';
@@ -289,35 +283,31 @@ function results(){
   eauCG=eauCG.replace(/,$/,'');
   // barres kWh (échelle racine, indicative)
   const kwhData=[['Charbon','0,82',1220,'#39414A'],['Mazout','0,308',3250,'#B23A28'],['Gaz naturel','0,271',3690,'#FBB513'],['Électricité, mix suisse','0,181',5500,'#19417E'],['Solaire, produit vert','0,045',22000,'#4E8A6B'],['Bois','0,041',24000,'#6E8B57'],['Nucléaire','0,012',83000,'#6B5BA0'],['Éolien','0,011',91000,'#5B8FA8']];
-  const fmtN=n=>n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'\u00A0');
+  const fmtN=n=>n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
   const kwhRows=kwhData.map(d=>{const w=Math.sqrt(d[2]/91000)*100;return `<div style="display:flex;align-items:center;gap:9px;padding:5px 0"><span style="flex:0 0 150px;line-height:1.15"><span style="font-size:13px;font-weight:700;color:var(--ink)">${d[0]}</span><br><span style="font-size:10px;color:var(--mut)">${d[1]} kg CO₂e/kWh</span></span><div style="flex:1;height:20px;background:#EEF1F3;border-radius:4px"><div style="height:100%;width:${w.toFixed(1)}%;background:${d[3]};border-radius:4px"></div></div><span style="flex:0 0 94px;text-align:right;white-space:nowrap"><b style="font-size:15px;color:var(--ink)">${fmtN(d[2])}</b> <span style="font-size:10px;color:var(--mut)">kWh</span></span></div>`;}).join('');
-
   card.className='card fade';
   card.innerHTML=`
   <div class="res">
     <div class="rhead"><h2>Votre empreinte</h2><p>Une estimation rapide, pour ouvrir la discussion.</p></div>
-
     <div class="hero">
       <div class="lbl">L'énergie de votre logement</div>
-      <div class="big"><span id="ven">0</span> <small>kWh par an, pour tout le logement</small></div>
-      <div style="font-size:12.5px;color:var(--mut);margin-top:2px">Chauffage, eau chaude et électricité, ce que les SI Nyon vous fournissent. ≈ ${fmt(mazoutL)} litres de mazout ou ${fmt(charbonPP)} kg de charbon.</div>
+      <div class="big"><span id="ven">0</span> <small>kWh par an</small></div>
+      ${m>1?`<div style="font-size:13px;font-weight:600;color:var(--slate);margin-top:3px">soit environ ${fmt(enParPers)}&nbsp;kWh par personne</div>`:``}
+      <div style="font-size:12.5px;color:var(--mut);margin-top:4px">Tout le logement&nbsp;: chauffage, eau chaude et électricité, ce que les SI Nyon vous fournissent. ≈ ${fmt(mazoutL)} litres de mazout ou ${fmt(charbonPP)} kg de charbon.</div>
       <div style="font-size:14px;color:var(--slate);margin-top:9px">Votre empreinte carbone, <b>par personne</b> et tous postes confondus&nbsp;: <b><span id="vtot">0</span> tonnes de CO₂ par an</b></div>
       <div class="sub" style="margin-top:5px">🌍 Si toute l'humanité vivait comme vous, il faudrait environ <b>${L(planetes)} planète${plS}</b>.</div>
       ${gauge}
     </div>
-
     <div class="break">
       <div class="h">D'où vient votre empreinte</div>
       <div class="stack">${segs}</div>
       <div class="legend">${leg}</div>
       <div style="margin-top:10px;color:var(--slate);font-size:13px">L'énergie et l'eau forment le domaine des SI Nyon. La part incompressible (environ ${L(incT)}&nbsp;t) est votre part de l'activité collective et économique de la ville&nbsp;: services publics, infrastructures, construction. C'est elle qui relie votre bilan à la moyenne du territoire, et personne ne la réduit seul.</div>
     </div>
-
     <div class="lever">
       <div class="k"><svg viewBox="0 0 24 24" fill="none" stroke="#9A6B00" stroke-width="2"><path d="M12 2v6m0 0 3-3m-3 3L9 5M5 12h14l-2 9H7z"/></svg>Votre levier n°1</div>
       <h3>${lv.title}</h3><p>${lv.body}</p>${lv.extra?`<p>${lv.extra}</p>`:''}
     </div>
-
     <div class="metric m-eau"><div class="bar"></div><div class="body">
       <div class="lbl">Votre eau</div>
       <div class="val"><span id="veau">0</span> <span class="unit">litres par personne et par jour</span></div>
@@ -326,7 +316,6 @@ function results(){
         <div style="flex:1">${eauLeg}</div>
       </div>
       <div class="eq">Eau du robinet distribuée par les SI Nyon. Moyenne suisse 142&nbsp;L par personne. Mais l'eau cachée dans notre alimentation et nos objets pèse bien plus&nbsp;: <b>environ 4200 litres par jour</b>, surtout pour la production agricole et industrielle, souvent à l'étranger.</div></div></div>
-
     <div style="border-top:1px solid var(--line);margin-top:6px;padding-top:14px">
       <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:6px">1 tonne de CO₂, c'est combien d'énergie&nbsp;?</div>
       <div style="font-size:13.5px;color:var(--ink);line-height:1.5;margin-bottom:10px">Plus la source est propre, plus vous consommez d'énergie avant d'atteindre une tonne de CO₂. Le même kWh, propre ou sale, ne pèse pas pareil.</div>
@@ -335,12 +324,10 @@ function results(){
       </div>
       <div style="font-size:11px;color:var(--mut);margin-top:8px;line-height:1.4">Facteurs du bilan de Nyon (OFEV)&nbsp;: l'électricité est comptée au mix suisse de consommation.</div>
     </div>
-
     <div class="utopie">
       <div class="h">Un mode de vie soutenable, c'est combien&nbsp;?</div>
       <p>L'objectif est de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Vous êtes aujourd'hui à <b>${L(totT)}&nbsp;tonnes</b>. Par vos propres choix, vous pouvez viser 4 à 5&nbsp;tonnes&nbsp;; descendre plus bas dépend ensuite de décisions collectives, comme l'énergie du pays, les transports ou l'industrie. C'est tout le sens de la <b>société à 2000&nbsp;watts</b>, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
     </div>
-
     <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; pour l'énergie du logement, cohérente avec la Statistique globale de l'énergie de l'OFEN (2025, environ 6600&nbsp;kWh par personne)&nbsp;; pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
     <button class="restart" id="rs">Recommencer</button>
   </div>`;

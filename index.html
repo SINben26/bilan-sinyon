@@ -254,7 +254,7 @@ function results(){
   const scale=Math.max(totPP,NYON)*1.12;
   const fillPct=Math.min(100,totPP/scale*100);
   const nyP=NYON/scale*100, objP=OBJ/scale*100;
-  const enTot=c.enHome/c.m + c.carEnergyPP;
+  const enTot=c.enHome;   // total du logement (ménage) : chauffage + eau chaude + électricité
   const enPP=r(enTot);
   const mazoutL=r(enTot/10);
   const charbonPP=r(enTot/8.14);
@@ -298,10 +298,10 @@ function results(){
     <div class="rhead"><h2>Votre empreinte</h2><p>Une estimation rapide, pour ouvrir la discussion.</p></div>
 
     <div class="hero">
-      <div class="lbl">Votre énergie (logement et voiture)</div>
-      <div class="big"><span id="ven">0</span> <small>kWh par personne et par an</small></div>
-      <div style="font-size:12.5px;color:var(--mut);margin-top:2px">≈ ${fmt(mazoutL)} litres de mazout ou ${fmt(charbonPP)} kg de charbon</div>
-      <div style="font-size:14px;color:var(--slate);margin-top:9px">Votre empreinte carbone, tous postes confondus&nbsp;: <b><span id="vtot">0</span> tonnes de CO₂ par an</b></div>
+      <div class="lbl">L'énergie de votre logement</div>
+      <div class="big"><span id="ven">0</span> <small>kWh par an, pour tout le logement</small></div>
+      <div style="font-size:12.5px;color:var(--mut);margin-top:2px">Chauffage, eau chaude et électricité, ce que les SI Nyon vous fournissent. ≈ ${fmt(mazoutL)} litres de mazout ou ${fmt(charbonPP)} kg de charbon.</div>
+      <div style="font-size:14px;color:var(--slate);margin-top:9px">Votre empreinte carbone, <b>par personne</b> et tous postes confondus&nbsp;: <b><span id="vtot">0</span> tonnes de CO₂ par an</b></div>
       <div class="sub" style="margin-top:5px">🌍 Si toute l'humanité vivait comme vous, il faudrait environ <b>${L(planetes)} planète${plS}</b>.</div>
       ${gauge}
     </div>
@@ -341,7 +341,7 @@ function results(){
       <p>L'objectif est de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Vous êtes aujourd'hui à <b>${L(totT)}&nbsp;tonnes</b>. Par vos propres choix, vous pouvez viser 4 à 5&nbsp;tonnes&nbsp;; descendre plus bas dépend ensuite de décisions collectives, comme l'énergie du pays, les transports ou l'industrie. C'est tout le sens de la <b>société à 2000&nbsp;watts</b>, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
     </div>
 
-    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
+    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; pour l'énergie du logement, cohérente avec la Statistique globale de l'énergie de l'OFEN (2025, environ 6600&nbsp;kWh par personne)&nbsp;; pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
     <button class="restart" id="rs">Recommencer</button>
   </div>`;
   countUp(document.getElementById('vtot'),totT,1);

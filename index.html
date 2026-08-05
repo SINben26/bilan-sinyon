@@ -119,7 +119,7 @@ const Q = [
  {id:'solaire',g:'energie',gl:'Énergie du logement',q:"Des panneaux solaires sur le toit&nbsp;?",
   o:[["Oui","oui"],["Non, mais le toit s'y prêterait","possible"],["Non, ou je suis en location","non"]]},
  {id:'elecsobr',g:'energie',gl:'Énergie du logement',q:"Côté électricité, vous diriez&nbsp;:",
-  o:[["J'y fais attention (LED, pas de veilles, appareils économes (A/B))",0.85],["Comme tout le monde (quelques écogestes, sans regarder la classe énergétique)",1.0],["Je n'y pense pas vraiment (je ne regarde pas la classe énergétique ni les veilles)",1.2]]},
+  o:[["J'y fais attention (LED, pas de veilles, appareils économes (A/B))",0.85],["Comme tout le monde (quelques écogestes, appareils de classe énergétique moyenne)",1.0],["Je n'y pense pas vraiment (je ne regarde pas la classe énergétique ni les veilles)",1.2]]},
  {id:'eau',g:'eau',gl:'Votre eau',q:"Vos habitudes d'eau chaude&nbsp;?",
   o:[["Surtout des douches courtes",0.8],["Des douches plutôt longues",1.3],["Des bains réguliers",1.7]]},
  {id:'exterieur',g:'eau',gl:'Votre eau',q:"À l'extérieur, vous avez&nbsp;:",
@@ -330,9 +330,15 @@ function results(){
     </div>
     <div class="utopie">
       <div class="h">Un mode de vie soutenable, c'est combien&nbsp;?</div>
-      <p>L'objectif est de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Vous êtes aujourd'hui à <b>${L(totT)}&nbsp;tonnes</b>. Par vos propres choix, vous pouvez viser 4 à 5&nbsp;tonnes&nbsp;; descendre plus bas dépend ensuite de décisions collectives, comme l'énergie du pays, les transports ou l'industrie. C'est tout le sens de la <b>société à 2000&nbsp;watts</b>, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
+      <p>L'objectif est de 1 à 2&nbsp;tonnes de CO₂ par personne et par an, pour rester dans les limites de la planète. Vous êtes aujourd'hui à <b>${L(totT)}&nbsp;tonnes</b>. Par vos propres choix, vous pouvez viser 4 à 5&nbsp;tonnes&nbsp;; descendre plus bas dépend ensuite de décisions collectives, comme l'énergie du pays, les transports ou l'industrie. 
+      <br> C'est tout le sens de la <b>société à 2000&nbsp;watts</b>, née à l'EPF de Zurich, qui vise à terme environ 1&nbsp;tonne de CO₂ par personne.</p>
     </div>
-    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; pour l'énergie du logement, cohérente avec la Statistique globale de l'énergie de l'OFEN (2025, environ 6600&nbsp;kWh par personne)&nbsp;; pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
+    <p class="foot">Les SI Nyon vous fournissent l'électricité, le gaz, la chaleur et l'eau, et subventionnent les travaux qui les réduisent. 
+    <br> À noter&nbsp;: dans le bilan officiel, l'électricité standard est comptée au mix suisse (181&nbsp;g CO₂/kWh)&nbsp;; choisir un produit vert qui finance de nouvelles installations la fait tomber à 45&nbsp;g. 
+    <br> La moyenne nyonnaise est de 13,6&nbsp;t par habitant·e (2022), l'objectif suisse pour 2050 d'environ 1 à 2&nbsp;t (la limite planétaire stricte étant même inférieure à 0,6&nbsp;t, OFEV). Le nombre de planètes est une estimation de l'empreinte écologique (Global Footprint Network)&nbsp;: la Suisse en consomme environ 2,8. Sources&nbsp;: 
+    <br> pour le CO₂, bilan carbone 2022 de la Ville de Nyon (Quantis &amp; Eqlosion) et OFEV&nbsp;; 
+    <br> pour l'énergie du logement, cohérente avec la Statistique globale de l'énergie de l'OFEN (2025, environ 6600&nbsp;kWh par personne)&nbsp;; 
+    <br> pour l'eau, SVGW et flyers des SI Nyon, ainsi que l'étude de l'empreinte hydrique suisse (WWF, 2012). Estimation indicative.</p>
     <button class="restart" id="rs">Recommencer</button>
   </div>`;
   countUp(document.getElementById('vtot'),totT,1);

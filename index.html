@@ -108,6 +108,8 @@ const Q = [
   o:[["Je vis seul·e",1],["Deux",2],["Trois ou quatre",3.5],["Cinq ou plus",5]]},
  {id:'logement',g:'menage',gl:'Votre ménage',q:"Vous habitez plutôt&nbsp;:",
   o:[["Un appartement","appt"],["Une maison","maison"]]},
+ {id:'surface',g:'menage',gl:'Votre ménage',q:"Quelle est la surface de votre logement&nbsp;?",
+  o:[["Moins de 40 m²",30],["40 à 80 m²",60],["80 à 120 m²",100],["120 à 160 m²",140],["Plus de 160 m²",200]]},
  {id:'statut',g:'menage',gl:'Votre ménage',q:"Vous êtes&nbsp;:",
   o:[["Propriétaire","proprio"],["Locataire","locataire"]]},
  {id:'chauffage',g:'energie',gl:'Énergie du logement',q:"Comment chauffez-vous votre logement&nbsp;?",
@@ -159,7 +161,9 @@ function r(n,d=0){const f=Math.pow(10,d);return Math.round(n*f)/f;}
 function fmt(n){return r(n).toLocaleString('fr-CH');}
 function compute(){
   const m=A.menage||2;
-  const baseT=(A.logement==='maison'?16000:7000)*(A.iso||1);
+  const S=A.surface||90;                            // surface du logement (m2)
+  const intens=(A.logement==='maison'?115:95);      // kWh/m2/an de chauffage, isolation moyenne (maison : plus d'enveloppe)
+  const baseT=S*intens*(A.iso||1);
   const thermal=baseT + 750*m*(A.eau||1);          // demande thermique du ménage
   const efElec=(A.solaire==='oui'?0.09:0.181);      // mix suisse standard 181 g ; produit vert/solaire 45 g (part auto-consommée)
   let co2HeatHH,enHeat;
